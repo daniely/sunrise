@@ -1,15 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Sunrise</title>
-  = stylesheet_link_tag    'application', media: 'all'
-  = javascript_include_tag 'application'
-  = csrf_meta_tags
-</head>
-<body>
+doctype html
+html
+  head
+    title Sunrise
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
+    = csrf_meta_tags
 
-.ui.container
-  = yield
+  body
+    p
 
-</body>
-</html>
+    .ui.main.container
+      .ui.menu
+        .header.item
+          h2= link_to 'Sunrise App', '/'
+        a.item Rent
+        a.item Units
+        a.item Tenants
+        .right.menu
+          .item
+            .ui.icon.input
+              input(type="text" placeholder="Search...")
+              i.search.link.icon
+          a.ui.item Logout
+      = yield
