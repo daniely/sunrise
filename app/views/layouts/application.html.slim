@@ -4,6 +4,8 @@ html
     title Sunrise
     = stylesheet_link_tag    'application', media: 'all'
     = javascript_include_tag 'application'
+    /= javascript_include_tag 'http://cdn.jsdelivr.net/vue/1.0.19/vue.min.js'
+    = javascript_include_tag 'http://cdn.jsdelivr.net/vue/1.0.19/vue.js'
     = csrf_meta_tags
 
   body
@@ -14,8 +16,9 @@ html
         .header.item
           h2= link_to 'Sunrise App', '/'
         a.item Rent
-        a.item Units
-        a.item Tenants
+        = link_to 'Units', units_path, class: 'item'
+        = link_to 'Tenants', tenants_path, class: 'item'
+        a.item Reports
         .right.menu
           .item
             .ui.icon.input

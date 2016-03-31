@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'pages#welcome'
 
+  resources :units, :tenants
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
