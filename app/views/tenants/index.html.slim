@@ -1,0 +1,48 @@
+h2  Tenants
+
+#tenants
+  p
+    |{{ units | json }}
+
+  form.ui.form
+    table.ui.celled.table
+      thead
+        tr
+          th Name
+          th Description
+          th Unit
+      tbody
+        tr(v-for="tenant in tenants")
+          td
+            |{{ tenant.name }}
+          td
+            |{{ tenant.description }}
+          td
+            |{{ tenant.unit }}
+        tr
+          td
+            input type="text" placeholder="name" v-model="new_name"
+          td
+            input type="text" placeholder="description" v-model="new_description"
+          td
+            = select_tag('county_tax[state]',
+              options_for_select([['4', '4'], ['5', '5'], ['6', '6']]),
+              prompt: 'select unit...',
+              class: 'ui dropdown',
+              'v-model': 'new_unit')
+
+javascript:
+  $(document).ready(function() {
+    var vm = new Vue({
+      el: '#tenants',
+      data: {
+        tenants: [
+          { name: 'Daniel', description: 'good tenant', unit: '1' },
+          { name: 'Rose', description: 'good tenant', unit: '2' },
+          { name: 'Fred', description: 'bad tenant', unit: '3' }
+        ]
+      }
+    })
+
+    $('select.dropdown').dropdown();
+  });

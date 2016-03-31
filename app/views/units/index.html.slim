@@ -1,0 +1,76 @@
+<h2>Units</h2>
+
+#units
+  /p
+    |{{ units | json }}
+
+  form.ui.form
+    table.ui.celled.table
+      thead
+        tr
+          th Number
+          th Receipt
+          th Tenant
+          th Rate
+          th Type
+      tbody
+        tr(v-for="unit in units")
+          td
+            |{{ unit.number }}
+          td
+            |{{ unit.receipt }}
+          td
+            |{{ unit.tenant }}
+          td
+            |{{ unit.rate }}
+          td
+            |{{ unit.type }}
+        tr
+          td
+            input type="text" placeholder="number" v-model="new_number"
+          td
+            input type="text" placeholder="receipt" v-model="new_receipt"
+          td
+            input type="text" placeholder="tenant" v-model="new_tenant"
+          td
+            input type="text" placeholder="rate" v-model="new_rate"
+          td
+            input type="text" placeholder="type" v-model="new_type" v-on:keyup.enter="submit"
+
+
+javascript:
+  $(document).ready(function() {
+    var vm = new Vue({
+      el: '#units',
+      data: {
+        units: [
+          { number: '1', receipt: '1234', rate: 1200, type: '2bd', tenant: 'John Lee' },
+          { number: '2', receipt: '1235', rate: 1100, type: '2bd', tenant: 'Lisa Smith' },
+          { number: '3', receipt: '1236', rate: 900, type: '1bd', tenant: 'Mark M.' }
+        ],
+        new_number: '',
+        new_receipt: '',
+        new_tenant: '',
+        new_rate: '',
+        new_type: ''
+      },
+      methods: {
+        submit: function() {
+          var new_unit = {
+                           number: this.new_number,
+                           receipt: this.new_receipt,
+                           rate: this.new_rate,
+                           type: this.new_type,
+                           tenant: this.new_tenant
+                         }
+          this.$data.units.push(new_unit);
+
+          new_number = '';
+          new_receipt = '';
+          new_tenant = '';
+          new_rate = '';
+          new_type = '';
+        }
+      }
+    });
+  });
