@@ -19,6 +19,7 @@ h2  Tenants
             |{{ tenant.description }}
           td
             |{{ tenant.unit }}
+            = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
         tr
           td
             input type="text" placeholder="name" v-model="new_name"
@@ -30,17 +31,54 @@ h2  Tenants
               prompt: 'select unit...',
               class: 'ui dropdown',
               'v-model': 'new_unit')
+            = link_to 'Add Tenant', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'addTenant'
 
 javascript:
   $(document).ready(function() {
     var vm = new Vue({
       el: '#tenants',
+      ready: function() {
+        var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
+
+        // get item
+        tenantsEndpoint.get({}).then(function (response) {
+          this.$set('tenants', response.data)
+        });
+      },
       data: {
-        tenants: [
-          { name: 'Daniel', description: 'good tenant', unit: '1' },
-          { name: 'Rose', description: 'good tenant', unit: '2' },
-          { name: 'Fred', description: 'bad tenant', unit: '3' }
-        ]
+        tenants: [],
+        new_name: '',
+        new_description: ''
+      },
+      methods: {
+        addTenant: function() {
+          var newTenant = { name: this.new_name, description: this.new_description };
+          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
+
+          tenantsEndpoint.save(newTenant).then(function (response) {
+            // success callback
+            this.$data.tenants.push(response.data);
+          }, function (response) {
+            // error callback
+            console.log("error: " + response)
+          });
+          // clear fields
+          this.new_name = '';
+          this.new_description = '';
+        },
+        removeTenant: function(tenant) {
+          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
+          // delete item
+          tenantsEndpoint.delete({id: tenant.id}).then(function (response) {
+            // success callback
+            this.$data.tenants.$remove(tenant);
+          }, function (response) {
+            // error callback
+            console.log("error: " + response)
+          });
+        },
+        editTenant: function(tenant) {
+        }
       }
     })
 
