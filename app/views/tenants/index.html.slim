@@ -5,18 +5,18 @@ template#tenant-row
     td
       span v-if="editMode === false"
         |{{ tenant.name }}
-      input type="text" v-model="new_name" :value="tenant.name" v-if="editMode"
+      input type="text" v-model="tenant.name" v-if="editMode"
     td
       span v-if="editMode === false"
         |{{ tenant.description }}
-      input type="text" v-model="new_description" :value="tenant.description" v-if="editMode"
+      input type="text" v-model="tenant.description" v-if="editMode"
     td
       span v-if="editMode === false"
         = link_to 'Delete', '/', class: [:ui, :button, :small, :right, :floated, :red], 'v-on:click.prevent': 'removeTenant(tenant)'
         = link_to 'Edit', '/', class: [:ui, :button, :small, :right, :floated], 'v-on:click.prevent': 'editTenant(tenant)'
       span(v-else)
         = link_to 'Save', '/', class: [:ui, :button, :small, :right, :floated, :green], 'v-on:click.prevent': 'updateTenant(tenant)'
-        = link_to 'Cancel', '/', class: [:ui, :button, :small, :right, :floated], 'v-on:click.prevent': 'cancelEdit'
+        = link_to 'Cancel', '/', class: [:ui, :button, :small, :right, :floated], 'v-on:click.prevent': 'cancelEdit(tenant)'
 
 #verify-delete.ui.modal.small
   .content
@@ -61,8 +61,8 @@ javascript:
       data: function() {
         return {
           editMode: false,
-          new_name: '',
-          new_description: ''
+          prev_name: '',
+          prev_description: ''
         }
       },
       methods: {
@@ -86,22 +86,23 @@ javascript:
         },
         editTenant: function(tenant) {
           this.editMode = true;
+          this.prev_name = tenant.name;
+          this.prev_description = tenant.description;
         },
-        cancelEdit: function() {
+        cancelEdit: function(tenant) {
           this.editMode = false;
+          tenant.name = this.prev_name;
+          tenant.description = this.prev_description;
         },
         updateTenant: function(tenant) {
-          this.cancelEdit();
+          this.editMode = false;
           var self = this;
 
           var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
           // update item
-          var updated_params = { name: this.new_name, description: this.new_description };
+          var updated_params = { name: tenant.name, description: tenant.description };
           tenantsEndpoint.update({id: tenant.id}, { tenant: updated_params }).then(function (response) {
-            var tenant = response.data;
             // success callback
-            this.$parent.$data['tenants'].$remove(self.tenant);
-            this.$parent.$data['tenants'].push(tenant);
           }, function (response) {
             // error callback
             console.log("error: " + response)
