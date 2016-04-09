@@ -3,13 +3,27 @@ h2 Tenants
 template#tenant-row
   tr
     td
-      |{{ tenant.name }}
-      input type="text" placeholder="name" v-model="new_name" v-if="editMode"
+      span v-if="editMode === false"
+        |{{ tenant.name }}
+      input type="text" v-model="new_name" :value="tenant.name" v-if="editMode"
     td
       |{{ tenant.description }}
     td
-      |{{ tenant.unit }}
-      = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+      = link_to 'Delete', '/', class: [:ui, :button, :right, :floated, :red], 'v-on:click.prevent': 'removeTenant(tenant)'
+      = link_to 'Edit', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+
+#verify-delete.ui.modal.small
+  .content
+    p
+      'Really delete tenant
+      span#tenant-name
+      '?
+  .actions
+    .ui.cancel.button
+      'No
+    .ui.approve.green.right.labeled.icon.button
+      'Yes
+      i.checkmark.icon
 
 form.ui.form
   table.ui.celled.table
@@ -40,15 +54,28 @@ javascript:
       props: ['tenant'],
       methods: {
         removeTenant: function(tenant) {
-          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
-          // delete item
-          tenantsEndpoint.delete({id: tenant.id}).then(function (response) {
-            // success callback
-            this.$parent.$data['tenants'].$remove(tenant);
-          }, function (response) {
-            // error callback
-            console.log("error: " + response)
-          });
+          var self = this;
+          $('#tenant-name').text(tenant.name);
+
+          $('#verify-delete').modal({
+            onApprove: function() {
+              var tenantsEndpoint = self.$resource('api/v1/tenants{/id}');
+              // delete item
+              tenantsEndpoint.delete({id: tenant.id}).then(function (response) {
+                // success callback
+                self.$parent.$data['tenants'].$remove(tenant);
+              }, function (response) {
+                // error callback
+                console.log("error: " + response)
+              });
+            }
+          }).modal('show');
+        }
+      },
+      data: function() {
+        return {
+          editMode: false,
+          new_name: ''
         }
       }
     })
