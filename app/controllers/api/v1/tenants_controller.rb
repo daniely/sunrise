@@ -21,7 +21,7 @@ class Api::V1::TenantsController < Api::V1::BaseController
     tenant.description = params[:tenant][:description]
 
     if tenant.save!
-      render json: { id: tenant.id, name: tenant.name, description: tenant.description }
+      render json: { success: 1 }
     else
       render json: { success: 0 }
     end
