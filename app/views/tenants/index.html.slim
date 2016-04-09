@@ -37,7 +37,20 @@ javascript:
   $(document).ready(function() {
     Vue.component('tenant-row', {
       template: '#tenant-row',
-      props: ['tenant']
+      props: ['tenant'],
+      methods: {
+        removeTenant: function(tenant) {
+          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
+          // delete item
+          tenantsEndpoint.delete({id: tenant.id}).then(function (response) {
+            // success callback
+            this.$parent.$data['tenants'].$remove(tenant);
+          }, function (response) {
+            // error callback
+            console.log("error: " + response)
+          });
+        }
+      }
     })
 
     var vm = new Vue({
@@ -70,17 +83,6 @@ javascript:
           // clear fields
           this.new_name = '';
           this.new_description = '';
-        },
-        removeTenant: function(tenant) {
-          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
-          // delete item
-          tenantsEndpoint.delete({id: tenant.id}).then(function (response) {
-            // success callback
-            this.$data.tenants.$remove(tenant);
-          }, function (response) {
-            // error callback
-            console.log("error: " + response)
-          });
         },
         editTenant: function(tenant) {
         }
