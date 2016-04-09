@@ -7,10 +7,16 @@ template#tenant-row
         |{{ tenant.name }}
       input type="text" v-model="new_name" :value="tenant.name" v-if="editMode"
     td
-      |{{ tenant.description }}
+      span v-if="editMode === false"
+        |{{ tenant.description }}
+      input type="text" v-model="new_description" :value="tenant.description" v-if="editMode"
     td
-      = link_to 'Delete', '/', class: [:ui, :button, :right, :floated, :red], 'v-on:click.prevent': 'removeTenant(tenant)'
-      = link_to 'Edit', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+      span v-if="editMode === false"
+        = link_to 'Delete', '/', class: [:ui, :button, :small, :right, :floated, :red], 'v-on:click.prevent': 'removeTenant(tenant)'
+        = link_to 'Edit', '/', class: [:ui, :button, :small, :right, :floated], 'v-on:click.prevent': 'editTenant(tenant)'
+      span(v-else)
+        = link_to 'Save', '/', class: [:ui, :button, :small, :right, :floated, :green], 'v-on:click.prevent': 'updateTenant(tenant)'
+        = link_to 'Cancel', '/', class: [:ui, :button, :small, :right, :floated], 'v-on:click.prevent': 'cancelEdit'
 
 #verify-delete.ui.modal.small
   .content
@@ -52,6 +58,13 @@ javascript:
     Vue.component('tenant-row', {
       template: '#tenant-row',
       props: ['tenant'],
+      data: function() {
+        return {
+          editMode: false,
+          new_name: '',
+          new_description: ''
+        }
+      },
       methods: {
         removeTenant: function(tenant) {
           var self = this;
@@ -70,12 +83,29 @@ javascript:
               });
             }
           }).modal('show');
-        }
-      },
-      data: function() {
-        return {
-          editMode: false,
-          new_name: ''
+        },
+        editTenant: function(tenant) {
+          this.editMode = true;
+        },
+        cancelEdit: function() {
+          this.editMode = false;
+        },
+        updateTenant: function(tenant) {
+          this.cancelEdit();
+          var self = this;
+
+          var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
+          // update item
+          var updated_params = { name: this.new_name, description: this.new_description };
+          tenantsEndpoint.update({id: tenant.id}, { tenant: updated_params }).then(function (response) {
+            var tenant = response.data;
+            // success callback
+            this.$parent.$data['tenants'].$remove(self.tenant);
+            this.$parent.$data['tenants'].push(tenant);
+          }, function (response) {
+            // error callback
+            console.log("error: " + response)
+          });
         }
       }
     })
@@ -110,8 +140,6 @@ javascript:
           // clear fields
           this.new_name = '';
           this.new_description = '';
-        },
-        editTenant: function(tenant) {
         }
       }
     })
