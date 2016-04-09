@@ -1,5 +1,16 @@
 h2 Tenants
 
+template#tenant-row
+  tr
+    td
+      |{{ tenant.name }}
+      input type="text" placeholder="name" v-model="new_name" v-if="editMode"
+    td
+      |{{ tenant.description }}
+    td
+      |{{ tenant.unit }}
+      = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+
 form.ui.form
   table.ui.celled.table
     thead
@@ -8,14 +19,7 @@ form.ui.form
         th Description
         th Unit
     tbody
-      tr(v-for="tenant in tenants")
-        td
-          |{{ tenant.name }}
-        td
-          |{{ tenant.description }}
-        td
-          |{{ tenant.unit }}
-          = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+      tr is="tenant-row" v-for="tenant in tenants" :tenant="tenant"
       tr
         td
           input type="text" placeholder="name" v-model="new_name"
@@ -31,6 +35,11 @@ form.ui.form
 
 javascript:
   $(document).ready(function() {
+    Vue.component('tenant-row', {
+      template: '#tenant-row',
+      props: ['tenant']
+    })
+
     var vm = new Vue({
       el: 'body',
       ready: function() {
