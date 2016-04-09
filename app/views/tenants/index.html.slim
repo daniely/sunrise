@@ -1,48 +1,44 @@
-h2  Tenants
+h2 Tenants
 
-#tenants
-  p
-    |{{ units | json }}
-
-  form.ui.form
-    table.ui.celled.table
-      thead
-        tr
-          th Name
-          th Description
-          th Unit
-      tbody
-        tr(v-for="tenant in tenants")
-          td
-            |{{ tenant.name }}
-          td
-            |{{ tenant.description }}
-          td
-            |{{ tenant.unit }}
-            = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
-        tr
-          td
-            input type="text" placeholder="name" v-model="new_name"
-          td
-            input type="text" placeholder="description" v-model="new_description"
-          td
-            = select_tag('county_tax[state]',
-              options_for_select([['4', '4'], ['5', '5'], ['6', '6']]),
-              prompt: 'select unit...',
-              class: 'ui dropdown',
-              'v-model': 'new_unit')
-            = link_to 'Add Tenant', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'addTenant'
+form.ui.form
+  table.ui.celled.table
+    thead
+      tr
+        th Name
+        th Description
+        th Unit
+    tbody
+      tr(v-for="tenant in tenants")
+        td
+          |{{ tenant.name }}
+        td
+          |{{ tenant.description }}
+        td
+          |{{ tenant.unit }}
+          = link_to 'Delete', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'removeTenant(tenant)'
+      tr
+        td
+          input type="text" placeholder="name" v-model="new_name"
+        td
+          input type="text" placeholder="description" v-model="new_description"
+        td
+          = select_tag('county_tax[state]',
+            options_for_select([['4', '4'], ['5', '5'], ['6', '6']]),
+            prompt: 'select unit...',
+            class: 'ui dropdown',
+            'v-model': 'new_unit')
+          = link_to 'Add Tenant', '/', class: [:ui, :button, :right, :floated], 'v-on:click.prevent': 'addTenant'
 
 javascript:
   $(document).ready(function() {
     var vm = new Vue({
-      el: '#tenants',
+      el: 'body',
       ready: function() {
         var tenantsEndpoint = this.$resource('api/v1/tenants{/id}');
 
         // get item
         tenantsEndpoint.get({}).then(function (response) {
-          this.$set('tenants', response.data)
+          this.$set('tenants', response.data);
         });
       },
       data: {
