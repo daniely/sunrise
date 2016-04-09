@@ -3,6 +3,14 @@ Rails.application.routes.draw do
 
   resources :units, :tenants
 
+
+  # rails API
+  namespace :api do
+    namespace :v1, constraints: { format: 'json' } do
+      resources :tenants
+    end
+  end
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
