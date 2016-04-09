@@ -2,11 +2,11 @@ h2 Tenants
 
 template#tenant-row
   tr
-    td
+    td v-on:dblclick="editTenant(tenant)"
       span v-if="editMode === false"
         |{{ tenant.name }}
       input type="text" v-model="tenant.name" v-if="editMode"
-    td
+    td v-on:dblclick="editTenant(tenant)"
       span v-if="editMode === false"
         |{{ tenant.description }}
       input type="text" v-model="tenant.description" v-if="editMode"
