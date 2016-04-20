@@ -9,7 +9,6 @@
       thead
         tr
           th Number
-          th Receipt
           th Tenant
           th Rate
           th Type
@@ -17,8 +16,6 @@
         tr(v-for="unit in units")
           td
             |{{ unit.number }}
-          td
-            |{{ unit.receipt }}
           td
             |{{ unit.tenant }}
           td
@@ -28,8 +25,6 @@
         tr
           td
             input type="text" placeholder="number" v-model="new_number"
-          td
-            input type="text" placeholder="receipt" v-model="new_receipt"
           td
             input type="text" placeholder="tenant" v-model="new_tenant"
           td
@@ -44,9 +39,9 @@ javascript:
       el: '#units',
       data: {
         units: [
-          { number: '1', receipt: '1234', rate: 1200, type: '2bd', tenant: 'John Lee' },
-          { number: '2', receipt: '1235', rate: 1100, type: '2bd', tenant: 'Lisa Smith' },
-          { number: '3', receipt: '1236', rate: 900, type: '1bd', tenant: 'Mark M.' }
+          { number: '1', rate: 1200, type: '2bd', tenant: 'John Lee' },
+          { number: '2', rate: 1100, type: '2bd', tenant: 'Lisa Smith' },
+          { number: '3', rate: 900, type: '1bd', tenant: 'Mark M.' }
         ],
         new_number: '',
         new_receipt: '',
